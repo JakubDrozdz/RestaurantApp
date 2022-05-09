@@ -1,10 +1,11 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class Main {
-    private static Menu menu = new Menu();
-    private static Scanner scan = new Scanner(System.in);
+    private static final Menu menu = new Menu();
+    private static final Scanner scan = new Scanner(System.in);
     public static void main(String[] args) {
         startRestaurant();
         //menu.addToMenu(new DishNoMeat("Toffu curry","curry z tofu","36.99", true),true);
@@ -22,7 +23,14 @@ public class Main {
     private static void startRestaurant(){
         System.out.println("Witamy w systemie obsługi restauracji XYZ!");
         printActionList();
-        int actionChoosen = scan.nextInt();
+        int actionChoosen = 0;
+        try{
+            actionChoosen = scan.nextInt();
+        }
+        catch(InputMismatchException ime){
+            System.out.println("Podaj poprawną liczbę");
+        }
+
         scan.nextLine();
         while(actionChoosen != 10){
             switch(actionChoosen){
@@ -39,13 +47,18 @@ public class Main {
                     removeFromMenu();
                     break;
                 case 5:
-                    removeFromMenu();
+                    setUnnavailable();
                     break;
                 default:
                     System.out.println("Brak okreslonej operacji");
             }
             System.out.println("\nPodaj kolejną operację:");
-            actionChoosen = scan.nextInt();
+            try{
+                actionChoosen = scan.nextInt();
+            }
+            catch(InputMismatchException ime){
+                System.out.println("Podaj poprawną liczbę");
+            }
             scan.nextLine();
         }
 
@@ -69,7 +82,7 @@ public class Main {
         }
         System.out.println("Czy danie jest wegetariańskie: ");
         String isVegetarian = scan.nextLine();
-        Boolean flag = null;
+        boolean flag;
         if(isVegetarian.equals("tak")){
             flag = menu.addToMenu(new DishNoMeat(name,desc,price,true),true);
         }

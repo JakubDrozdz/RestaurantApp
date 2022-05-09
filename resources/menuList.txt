@@ -1,5 +1,3 @@
-Pizza;peperoni;35.99;false
-mmm;nnn;22.22;false
-kkk;lll;44.44;true
-Pizza;peperoni;35.99;false
-kkk;lll;44.44;true
+Tofu;roslina;21.99;true
+Pizza;hawajska;35.90;false
+Tatar;mieso;29.99;false

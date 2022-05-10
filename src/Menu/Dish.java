@@ -1,3 +1,5 @@
+package Menu;
+
 public class Dish {
     protected String name;
     protected String description;
@@ -13,7 +15,7 @@ public class Dish {
     }
 
     public String toString(){
-        if(available == false)
+        if(!available)
             return isVegetarian ? (name + "\n" + description + "\t" + price + " zl\t(wegetarianskie)")
                 : (name + "\n" + description + "\t" + price + " zl - NIEDOSTEPNE");
         else

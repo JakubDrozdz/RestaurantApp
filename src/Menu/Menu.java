@@ -1,22 +1,26 @@
+package Menu;
+
+import Interfaces.IFileReader;
+import Interfaces.IFileWrite;
 
 import java.io.*;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
-public class Menu {
-    //private String filepath = "../../../resources/menuList.txt"; //file path which works in when runing program from terminal
-    private String filepath = "resources/menuList.txt";
-    private HashMap<Integer,Dish> menuList;
+public class Menu implements IFileWrite, IFileReader {
+    //private final String filepath = "../../../resources/menuList.txt"; //file path which works in when runing program from terminal
+    private final String filepath = "resources/menuList.txt";
+    private HashMap<Integer, Dish> menuList;
     private Integer id;
     public Menu() {
         this.menuList = new HashMap();
         id = 1;
         readMenu();
     }
-    public boolean addToMenu(Dish dish,boolean addToFile){
+    public boolean addToMenu(Dish dish, boolean addToFile){
+        boolean flag = false;
         if(addToFile){
-            try {
+            /*try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(filepath,true));
                 bw.write("\n"+dish.getName()+";"+dish.getDescription()+";"+ dish.getPrize()+";"+dish.isVegetarian());
                 bw.close();
@@ -27,10 +31,10 @@ public class Menu {
             catch(IOException e){
                 System.out.println("File error!");
                 return false;
-            }
+            }*/
+            flag =  fileWrite(filepath,dish.getName()+";"+dish.getDescription()+";"+ dish.getPrize()+";"+dish.isVegetarian());
         }
         menuList.put((id++),dish);
-
         return true;
     }
     public void showMenu(){
@@ -40,17 +44,17 @@ public class Menu {
         });
     }
     private void readMenu(){
-        try{
+        /*try{
             BufferedReader br = new BufferedReader(new FileReader(filepath));
             String line;
             while((line = br.readLine()) != null){
                 String[] data = line.split(";");
-                Dish d;
+                Menu.Menu.Dish d;
                 if(data[data.length-1].equals("true")){
-                    d = new DishNoMeat(data[0],data[1],data[2],true);
+                    d = new Menu.Menu.DishNoMeat(data[0],data[1],data[2],true);
                 }
                 else{
-                    d = new DishMeat(data[0],data[1],data[2],false);
+                    d = new Menu.Menu.DishMeat(data[0],data[1],data[2],false);
                 }
                 addToMenu(d,false);
             }
@@ -61,9 +65,18 @@ public class Menu {
         }
         catch(IOException e){
             System.out.println("Read error");
+        }*/
+        String[][] data = fileRead(filepath);
+        for (int i = 0; i < data.length; i++) {
+            Dish d;
+            if(data[i][data.length-1].equals("true")){
+                d = new DishNoMeat(data[i][0],data[i][1],data[i][2],true);
+            }
+            else{
+                d = new DishMeat(data[i][0],data[i][1],data[i][2],false);
+            }
+            addToMenu(d,false);
         }
-
-
     }
     public boolean remove(int dishId){
         menuList.remove(dishId);
@@ -81,19 +94,38 @@ public class Menu {
             br=new BufferedReader(new FileReader(inputFile));
             while((line = br.readLine()) != null){
                 currentLine++;
-                if(currentLine == dishId){
-                    flag = true;
-                    continue;
-                }
-                else{
-                    if(currentLine == lines){
-                        writer.write(line);
+                if(dishId<=lines){
+                    if(currentLine == dishId){
+                        flag = true;
+                        continue;
                     }
                     else{
-                        writer.write(line + System.getProperty("line.separator"));
+                        if(dishId == lines){
+                            if((currentLine == lines-1)){
+                                writer.write(line);
+                            }
+                            else{
+                                writer.write(line + System.getProperty("line.separator"));
+                            }
+                        }
+                        else{
+                            if((currentLine == lines)){
+                                writer.write(line);
+                            }
+                            else{
+                                writer.write(line + System.getProperty("line.separator"));
+                            }
+                        }
+
                     }
                 }
-
+                else{
+                    if((currentLine == lines)){
+                        writer.write(line);
+                    }
+                    else
+                        writer.write(line + System.getProperty("line.separator"));
+                }
             }
 
             br.close();

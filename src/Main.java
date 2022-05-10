@@ -1,3 +1,5 @@
+import Menu.*;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -8,7 +10,7 @@ public class Main {
     private static final Scanner scan = new Scanner(System.in);
     public static void main(String[] args) {
         startRestaurant();
-        //menu.addToMenu(new DishNoMeat("Toffu curry","curry z tofu","36.99", true),true);
+        //menu.addToMenu(new Menu.Menu.DishNoMeat("Toffu curry","curry z tofu","36.99", true),true);
     }
 
     private static void printActionList(){

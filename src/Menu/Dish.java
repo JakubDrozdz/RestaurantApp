@@ -5,7 +5,7 @@ public class Dish {
     protected String description;
     protected String price;
     protected boolean isVegetarian;
-    protected  boolean available;
+    protected boolean available;
 
     public Dish(String name, String description, String price) {
         this.name = name;
@@ -24,20 +24,21 @@ public class Dish {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public String getPrize() {
-        return price;
+        return this.price;
     }
 
     public boolean isVegetarian() {
-        return isVegetarian;
+        return this.isVegetarian;
     }
+
 
     public void setUnavailable() {
         this.available = false;

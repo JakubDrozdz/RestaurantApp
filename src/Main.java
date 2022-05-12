@@ -1,3 +1,4 @@
+import Employees.Employee;
 import Menu.*;
 
 import java.util.InputMismatchException;
@@ -6,11 +7,12 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class Main {
-    private static final Menu menu = new Menu();
+    private static final Container<Dish> menu= new Container<>("menu");
+    //private static toDelete_Menu menu = new toDelete_Menu();
+    private static final Container<Employee> employees= new Container<>("employees");
     private static final Scanner scan = new Scanner(System.in);
     public static void main(String[] args) {
         startRestaurant();
-        //menu.addToMenu(new Menu.Menu.DishNoMeat("Toffu curry","curry z tofu","36.99", true),true);
     }
 
     private static void printActionList(){
@@ -20,6 +22,8 @@ public class Main {
                 "3 - dodaj pozycję do menu\n" +
                 "4 - usuń pozycję z menu\n" +
                 "5 - oznacz danie jako nie dostępne\n" +
+                "6 - dodaj pracownika\n" +
+                "7 - wyświetl pracowników\n" +
                 "10 - zakończ\n");
     }
     private static void startRestaurant(){
@@ -40,7 +44,7 @@ public class Main {
                     printActionList();
                     break;
                 case 2:
-                    showMenu();
+                    menu.showList();
                     break;
                 case 3:
                     addToMenu();
@@ -50,6 +54,12 @@ public class Main {
                     break;
                 case 5:
                     setUnnavailable();
+                    break;
+                case 6:
+                    addEmployee();
+                    break;
+                case 7:
+                    employees.showList();
                     break;
                 default:
                     System.out.println("Brak okreslonej operacji");
@@ -64,9 +74,6 @@ public class Main {
             scan.nextLine();
         }
 
-    }
-    private static void showMenu(){
-        menu.showMenu();
     }
     private static void addToMenu(){
         System.out.println("Podaj nazwę dania:" );
@@ -86,10 +93,10 @@ public class Main {
         String isVegetarian = scan.nextLine();
         boolean flag;
         if(isVegetarian.equals("tak")){
-            flag = menu.addToMenu(new DishNoMeat(name,desc,price,true),true);
+            flag = menu.addToList(new DishNoMeat(name,desc,price,true),true, name+";"+ desc+";"+ price+ ";"+"true");
         }
         else{
-            flag = menu.addToMenu(new DishMeat(name,desc,price,false),true);
+            flag = menu.addToList(new DishMeat(name,desc,price,false),true,name+";"+ desc+";"+ price+ ";"+"false");
         }
         System.out.println(flag ? "Danie dodane poprawnie" : "Danie nie dodane poprawnie");
     }
@@ -110,5 +117,16 @@ public class Main {
             System.out.println("Danie oznaczone jako niedostepne!");
         else
             System.out.println("Nie można oznaczyć dania");
+    }
+    private static void addEmployee(){
+        System.out.println("Podaj imię:" );
+        String firstName = scan.nextLine();
+        System.out.println("Podaj nazwisko: ");
+        String lastName = scan.nextLine();
+        System.out.println("Podaj stanowisko: ");
+        String jobTitle = scan.nextLine();
+
+        boolean flag = employees.addToList(new Employee(firstName,lastName,jobTitle,0.0),true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
+        System.out.println(flag ? "Pracownik dodany poprawnie" : "Pracownik nie dodany poprawnie");
     }
 }

@@ -1,3 +1,0 @@
-Pizza;peperoni;35.99;false
-mmm;nnn;22.22;false
-kkk;lll;44.44;true

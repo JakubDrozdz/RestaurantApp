@@ -7,12 +7,12 @@ import java.io.*;
 
 import java.util.HashMap;
 
-public class Menu implements IFileWrite, IFileReader {
+public class toDelete_Menu implements IFileWrite, IFileReader {
     //private final String filepath = "../../../resources/menuList.txt"; //file path which works in when runing program from terminal
     private final String filepath = "resources/menuList.txt";
     private HashMap<Integer, Dish> menuList;
     private Integer id;
-    public Menu() {
+    public toDelete_Menu() {
         this.menuList = new HashMap();
         id = 1;
         readMenu();
@@ -44,29 +44,28 @@ public class Menu implements IFileWrite, IFileReader {
         });
     }
     private void readMenu(){
-        /*try{
+        try{
             BufferedReader br = new BufferedReader(new FileReader(filepath));
             String line;
             while((line = br.readLine()) != null){
                 String[] data = line.split(";");
-                Menu.Menu.Dish d;
+                Dish d;
                 if(data[data.length-1].equals("true")){
-                    d = new Menu.Menu.DishNoMeat(data[0],data[1],data[2],true);
+                    d = new DishNoMeat(data[0],data[1],data[2],true);
                 }
                 else{
-                    d = new Menu.Menu.DishMeat(data[0],data[1],data[2],false);
+                    d = new DishMeat(data[0],data[1],data[2],false);
                 }
                 addToMenu(d,false);
             }
             br.close();
-
         }catch(FileNotFoundException fnfe){
             System.out.println("File not found!");
         }
         catch(IOException e){
             System.out.println("Read error");
-        }*/
-        String[][] data = fileRead(filepath);
+        }
+        /*String[][] data = fileRead(filepath);
         for (int i = 0; i < data.length; i++) {
             Dish d;
             if(data[i][data.length-1].equals("true")){
@@ -76,7 +75,7 @@ public class Menu implements IFileWrite, IFileReader {
                 d = new DishMeat(data[i][0],data[i][1],data[i][2],false);
             }
             addToMenu(d,false);
-        }
+        }*/
     }
     public boolean remove(int dishId){
         menuList.remove(dishId);

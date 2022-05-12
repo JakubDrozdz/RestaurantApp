@@ -5,7 +5,9 @@ import java.io.*;
 public interface IFileWrite {
     default boolean fileWrite(String filePath, String dataString){
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath,true));
+            File file = new File(filePath);
+            file.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file,true));
             bw.write("\n"+dataString);
             bw.close();
         } catch (FileNotFoundException fnfe) {

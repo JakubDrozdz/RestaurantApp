@@ -1,5 +1,13 @@
 package Employees;
 
+import Menu.DishMeat;
+import Menu.DishNoMeat;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class Employee{
     protected String lastName;
     protected String firstName;
@@ -31,6 +39,35 @@ public class Employee{
 
     public String getJobTitle() {
         return jobTitle;
+    }
+
+    public static int countEmpOnPosition(Employee e){
+        int counter = 0;
+        try{
+            BufferedReader br = new BufferedReader(new FileReader("resources/employeesList.txt"));
+            String line;
+            while((line = br.readLine()) != null){
+                String[] data = line.split(";");
+                String pos = data[2];
+                if(pos.equals(e.getJobTitle()))
+                    counter++;
+            }
+            br.close();
+        }catch(FileNotFoundException fnfe){
+            System.out.println("Counting employees on position: File not found!");
+        }
+        catch(IOException ioe){
+            System.out.println("Counting employees on position: Read error");
+        }
+        return counter;
+    }
+
+    public static boolean canDeleteEmployee(Object e){
+        int noOfEmployees = countEmpOnPosition((Employee) e);
+        if(noOfEmployees > 1)
+            return true;
+        else
+            return false;
     }
 
     /*

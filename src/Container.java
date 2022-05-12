@@ -1,4 +1,5 @@
 import Employees.Employee;
+import Employees.NotEnoughEmployeesException;
 import Interfaces.IFileReader;
 import Interfaces.IFileWrite;
 import Menu.Dish;
@@ -80,12 +81,11 @@ public class Container <T> implements IFileWrite, IFileReader {
     }
 
     public boolean remove(int tId){
-        list.remove(tId);
         boolean flag=false;
         try{
             File inputFile = new File(filepath);
             BufferedReader br = new BufferedReader(new FileReader(inputFile));
-            File tempFile = new File("resources/tempMenu.txt");
+            File tempFile = new File("resources/tempFile.txt");
             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
             String line;
             int currentLine=0;
@@ -96,6 +96,8 @@ public class Container <T> implements IFileWrite, IFileReader {
             while((line = br.readLine()) != null){
                 currentLine++;
                 if(tId<=lines){
+                    if (this.objName.equals("employees") && !Employee.canDeleteEmployee(list.get(tId)))
+                        throw new NotEnoughEmployeesException("Ostatni pracownik na danej pozycji!");
                     if(currentLine == tId){
                         flag = true;
                         continue;
@@ -128,7 +130,7 @@ public class Container <T> implements IFileWrite, IFileReader {
                         writer.write(line + System.getProperty("line.separator"));
                 }
             }
-
+            list.remove(tId);
             br.close();
             writer.close();
             tempFile.renameTo(inputFile);
@@ -136,7 +138,10 @@ public class Container <T> implements IFileWrite, IFileReader {
             list.clear();
             readList();
 
-        }catch(FileNotFoundException fnfe){
+        }catch(NotEnoughEmployeesException neee){
+            System.out.println(neee.getMessage());
+        }
+        catch(FileNotFoundException fnfe){
             System.out.println("File not found!");
             return false;
         }

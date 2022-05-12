@@ -24,6 +24,7 @@ public class Main {
                 "5 - oznacz danie jako nie dostępne\n" +
                 "6 - dodaj pracownika\n" +
                 "7 - wyświetl pracowników\n" +
+                "8 - zwolnij pracownika\n" +
                 "10 - zakończ\n");
     }
     private static void startRestaurant(){
@@ -60,6 +61,9 @@ public class Main {
                     break;
                 case 7:
                     employees.showList();
+                    break;
+                case 8:
+                    fireEmployee();
                     break;
                 default:
                     System.out.println("Brak okreslonej operacji");
@@ -128,5 +132,14 @@ public class Main {
 
         boolean flag = employees.addToList(new Employee(firstName,lastName,jobTitle,0.0),true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
         System.out.println(flag ? "Pracownik dodany poprawnie" : "Pracownik nie dodany poprawnie");
+    }
+    private static void fireEmployee(){
+        System.out.println("Podaj ID pracownika:");
+        int id = scan.nextInt();
+        scan.nextLine();
+        if(employees.remove(id))
+            System.out.println("Pracownik zwolniony!");
+        else
+            System.out.println("Nie można usunąć");
     }
 }

@@ -40,7 +40,7 @@ public class Container <T> implements IFileWrite, IFileReader {
         });
     }
     private void readList(){
-        try{
+        /*try{
             BufferedReader br = new BufferedReader(new FileReader(filepath));
             String line;
             while((line = br.readLine()) != null){
@@ -65,21 +65,25 @@ public class Container <T> implements IFileWrite, IFileReader {
         }
         catch(IOException e){
             System.out.println("Read error");
-        }
-        /*String[][] data = fileRead(filepath);
-        for (int i = 0; i < data.length; i++) {
-            T t;
-            if(data[i][data.length-1].equals("true")){
-                t = (T) new DishNoMeat(data[i][0],data[i][1],data[i][2],true);
-            }
-            else{
-                t = (T) new DishMeat(data[i][0],data[i][1],data[i][2],false);
-            }
-            addToMenu(t,false);
         }*/
+        String[][] data = fileRead(filepath);
+        for (int i = 0; i < data.length; i++) {
+            T t = null;
+            if(this.objName.equals("menu")){
+                if(data[data.length-1].equals("true")){
+                    t = (T) new DishNoMeat(data[i][0],data[i][1],data[i][2],true);
+                }
+                else{
+                    t = (T) new DishMeat(data[i][0],data[i][1],data[i][2],false);
+                }
+            }
+            if(this.objName.equals("employees")){
+                t = (T) new Employee(data[i][0],data[i][1],data[i][2],Double.parseDouble(data[i][3]));
+            }
+            addToList(t,false,null);
+        }
 
     }
-
     public boolean remove(int tId){
         boolean flag=false;
         try{

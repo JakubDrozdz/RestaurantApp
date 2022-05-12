@@ -148,7 +148,7 @@ public class Container <T> implements IFileWrite, IFileReader {
         return flag;
     }
     public boolean setUnavailable(int tId){
-        if(this.getClass().getSimpleName().equals("Dish")){
+        if(this.objName.equals("menu")){
             if(tId<=id && tId>=1){
                 ((Dish)list.get(tId)).setUnavailable();
                 return true;

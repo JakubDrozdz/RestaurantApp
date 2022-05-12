@@ -3,3 +3,4 @@ Kamil;Kowal;dostawca;0
 Ala;Jakas;asd;0
 ads;dsa;asd;0.0
 asdsda;asdasda;sds;0.0
+Jakub;Doe;programista;0.0

@@ -1,3 +1,2 @@
-Tofu;rosl;12.12;true
 asd;asd;12.12;false
-Pizza;peperoni;23.32;false
+Pizza;peperoni;35.99;false

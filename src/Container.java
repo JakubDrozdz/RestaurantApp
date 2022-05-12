@@ -9,7 +9,6 @@ import java.io.*;
 import java.util.HashMap;
 
 public class Container <T> implements IFileWrite, IFileReader {
-    //private String filepath = "../../../resources/menuList.txt"; //file path which works in when runing program from terminal
     private String filepath;
     private HashMap<Integer, T> list;
     private Integer id;
@@ -19,7 +18,7 @@ public class Container <T> implements IFileWrite, IFileReader {
         this.id = 1;
         this.objName = objName;
         this.filepath ="resources/" + this.objName + "List.txt";
-        //this.filepath ="../../../resources/" + this.objName + "List.txt";
+        //this.filepath ="/Users/drozdj01/OneDrive - Polsko-Japońska Akademia Technik Komputerowych/Studia/sem_II/GUI/s24871_pro1/resources/" + this.objName + "List.txt";//file path which works in when runing program from terminal
         readList();
     }
     public boolean addToList(T t, boolean addToFile, String dataString){

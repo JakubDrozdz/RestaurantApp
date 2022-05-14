@@ -22,7 +22,7 @@ public class Employee{
     }
 
     public String toString(){
-        return jobTitle + ": " + firstName + " " + lastName + ", tip ammount: " + + tip;
+        return jobTitle + ": " + firstName + " " + lastName + ", napiwek: " + + tip;
     }
 
     public String getLastName() {

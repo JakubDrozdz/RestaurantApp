@@ -1,4 +1,7 @@
+import Employees.Chef;
+import Employees.Delivery;
 import Employees.Employee;
+import Employees.Waiteer;
 import Menu.*;
 
 import java.util.InputMismatchException;
@@ -176,7 +179,18 @@ public class Main {
             telephoneNumber = scan.nextLine();
             matcher = pattern.matcher(telephoneNumber);
         }
-        boolean flag = employees.addToList(new Employee(firstName,lastName,telephoneNumber,jobTitle,0.0),true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
+        boolean flag = false;
+                //employees.addToList(new Employee(firstName,lastName,telephoneNumber,jobTitle,0.0),
+                //true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
+        if(jobTitle.equals("kelner"))
+            flag = employees.addToList(new Waiteer(firstName,lastName,telephoneNumber,jobTitle,0.0),
+                    true, firstName+";"+lastName+";"+telephoneNumber+";"+jobTitle+";"+"0.0");
+        if (jobTitle.equals("kucharz"))
+            flag = employees.addToList(new Chef(firstName,lastName,telephoneNumber,jobTitle,0.0),
+                    true, firstName+";"+lastName+";"+telephoneNumber+";"+jobTitle+";"+"0.0");
+        if(jobTitle.equals("dostawca"))
+            flag = employees.addToList(new Delivery(firstName,lastName,telephoneNumber,jobTitle,0.0),
+                    true, firstName+";"+lastName+";"+telephoneNumber+";"+jobTitle+";"+"0.0");
         System.out.println(flag ? "Pracownik dodany poprawnie" : "Pracownik nie dodany poprawnie");
     }
     private static void fireEmployee(){

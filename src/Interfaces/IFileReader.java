@@ -30,8 +30,8 @@ public interface IFileReader{
         }
         catch(IOException e){
             System.out.println("Read error");
-        }
-        return dataStrings;*/
+        }*/
+
         try{
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line;

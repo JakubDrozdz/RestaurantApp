@@ -1,6 +1,6 @@
 package Menu;
 
-public class Dish {
+public abstract class Dish {
     protected String name;
     protected String description;
     protected String price;

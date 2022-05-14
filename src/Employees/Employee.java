@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Employee{
+public abstract class Employee{
     protected String lastName;
     protected String firstName;
     protected String telephoneNumber;

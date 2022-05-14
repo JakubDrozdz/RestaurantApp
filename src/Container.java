@@ -1,5 +1,4 @@
-import Employees.Employee;
-import Employees.NotEnoughEmployeesException;
+import Employees.*;
 import Interfaces.IFileReader;
 import Interfaces.IFileWrite;
 import Menu.Dish;
@@ -70,7 +69,7 @@ public class Container <T> implements IFileWrite, IFileReader {
         for (int i = 0; i < data.length; i++) {
             T t = null;
             if(this.objName.equals("menu")){
-                if(data[data.length-1].equals("true")){
+                if(data[i][data[i].length-1].equals("true")){
                     t = (T) new DishNoMeat(data[i][0],data[i][1],data[i][2],true);
                 }
                 else{
@@ -78,7 +77,12 @@ public class Container <T> implements IFileWrite, IFileReader {
                 }
             }
             if(this.objName.equals("employees")){
-                t = (T) new Employee(data[i][0],data[i][1],data[i][2],data[i][3],Double.parseDouble(data[i][4]));
+                if(data[i][data[i].length-2].equals("kelner"))
+                    t = (T) new Waiteer(data[i][0],data[i][1],data[i][2],data[i][3],Double.parseDouble(data[i][4]));
+                if (data[i][data[i].length-2].equals("kucharz"))
+                    t = (T) new Chef(data[i][0],data[i][1],data[i][2],data[i][3],Double.parseDouble(data[i][4]));
+                if(data[i][data[i].length-2].equals("dostawca"))
+                    t = (T) new Delivery(data[i][0],data[i][1],data[i][2],data[i][3],Double.parseDouble(data[i][4]));
             }
             addToList(t,false,null);
         }

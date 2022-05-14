@@ -54,7 +54,7 @@ public class Main {
                     removeFromMenu();
                     break;
                 case 5:
-                    setUnnavailable();
+                    setUnavailable();
                     break;
                 case 6:
                     addEmployee();
@@ -116,7 +116,7 @@ public class Main {
         else
             System.out.println("Nie można usunąć");
     }
-    private static void setUnnavailable(){
+    private static void setUnavailable(){
         System.out.println("Podaj ID dania:");
         int id = scan.nextInt();
         scan.nextLine();

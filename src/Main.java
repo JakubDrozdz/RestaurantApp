@@ -127,9 +127,43 @@ public class Main {
         String firstName = scan.nextLine();
         System.out.println("Podaj nazwisko: ");
         String lastName = scan.nextLine();
-        System.out.println("Podaj stanowisko: ");
-        String jobTitle = scan.nextLine();
-
+        String jobTitle = null;
+        System.out.println("Wtbierz stanowisko: " +
+                "\n1 - kelner" +
+                "\n2 - dostawca" +
+                "\n3 - kucharz");
+        int actionChoosen = 0;
+        try{
+            actionChoosen = scan.nextInt();
+        }
+        catch(InputMismatchException ime){
+            System.out.println("Podaj poprawną liczbę");
+        }
+        while(!(actionChoosen ==10)){
+            switch(actionChoosen){
+                case 1:
+                    jobTitle = "kelner";
+                    actionChoosen=10;
+                    break;
+                case 2:
+                    jobTitle = "dostawca";
+                    actionChoosen=10;
+                    break;
+                case 3:
+                    jobTitle = "kucharz";
+                    actionChoosen=10;
+                    break;
+                default:
+                    System.out.println("Wybierz dostępną opcję");
+                    try{
+                        actionChoosen = scan.nextInt();
+                    }
+                    catch(InputMismatchException ime){
+                        System.out.println("Podaj poprawną liczbę");
+                    }
+            }
+        }
+        scan.nextLine();
         boolean flag = employees.addToList(new Employee(firstName,lastName,jobTitle,0.0),true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
         System.out.println(flag ? "Pracownik dodany poprawnie" : "Pracownik nie dodany poprawnie");
     }

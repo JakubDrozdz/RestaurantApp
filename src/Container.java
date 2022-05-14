@@ -166,4 +166,10 @@ public class Container <T> implements IFileWrite, IFileReader {
         }
         return false;
     }
+    public void showData(int tId){
+        System.out.println(list.get(tId));
+    }
+    public int getSize(){
+        return list.size();
+    }
 }

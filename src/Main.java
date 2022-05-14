@@ -14,7 +14,6 @@ public class Main {
     public static void main(String[] args) {
         startRestaurant();
     }
-
     private static void printActionList(){
         System.out.println("Wybierz odpowiednią cyfrę w celu wykonania konkretnej operacji:");
         System.out.println("1 - wyswietl listę akcji ponownie\n" +
@@ -25,7 +24,8 @@ public class Main {
                 "6 - dodaj pracownika\n" +
                 "7 - wyświetl pracowników\n" +
                 "8 - zwolnij pracownika\n" +
-                "10 - zakończ\n");
+                "9 - wyświetl informacje o pracowniku\n" +
+                "15 - zakończ\n");
     }
     private static void startRestaurant(){
         System.out.println("Witamy w systemie obsługi restauracji XYZ!");
@@ -39,7 +39,7 @@ public class Main {
         }
 
         scan.nextLine();
-        while(actionChoosen != 10){
+        while(actionChoosen != 15){
             switch(actionChoosen){
                 case 1:
                     printActionList();
@@ -64,6 +64,9 @@ public class Main {
                     break;
                 case 8:
                     fireEmployee();
+                    break;
+                case 9:
+                    showEmployeeData();
                     break;
                 default:
                     System.out.println("Brak okreslonej operacji");
@@ -175,5 +178,26 @@ public class Main {
             System.out.println("Pracownik zwolniony!");
         else
             System.out.println("Nie można usunąć");
+    }
+    private static void showEmployeeData(){
+        int id = 0;
+        boolean flag = false;
+        while(!flag){
+            try{
+                System.out.println("Podaj id pracownika, którego dane chcesz wyświetlić");
+                id = scan.nextInt();
+                if(id>employees.getSize()){
+                    System.out.println("Podaj poprawną liczbę");
+                    flag = false;
+                }
+                else
+                    flag = true;
+            }
+            catch(InputMismatchException ime){
+                System.out.println("Podaj poprawną liczbę");
+                flag = false;
+            }
+        }
+        employees.showData(id);
     }
 }

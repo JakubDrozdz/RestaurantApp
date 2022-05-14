@@ -22,7 +22,7 @@ public class Employee{
     }
 
     public String toString(){
-        return jobTitle + ": " + firstName + " " + lastName + ", napiwek: " + + tip;
+        return firstName + " " + lastName + ", stanowisko: " + jobTitle;
     }
 
     public String getLastName() {
@@ -69,6 +69,7 @@ public class Employee{
         else
             return false;
     }
+
 
     /*
     public boolean addEmployee(Employee employee, boolean addToFile){

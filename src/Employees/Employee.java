@@ -54,7 +54,7 @@ public abstract class Employee{
             String line;
             while((line = br.readLine()) != null){
                 String[] data = line.split(";");
-                String pos = data[2];
+                String pos = data[3];
                 if(pos.equals(e.getJobTitle()))
                     counter++;
             }

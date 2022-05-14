@@ -2,5 +2,5 @@ Pizza;peperoni;35.99;false
 Tofu;roslina;24.99;true
 Ananas;owoc;12.21;true
 Cola;napoj;5.99;false
-Jablko;owoc;12.12;true
 Pizza;hawajska;24.44;false
+Mandarynka;owoc;3.99;true

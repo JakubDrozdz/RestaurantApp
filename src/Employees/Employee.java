@@ -11,18 +11,24 @@ import java.io.IOException;
 public class Employee{
     protected String lastName;
     protected String firstName;
+    protected String telephoneNumber;
     protected Double tip;
     protected String jobTitle;
 
-    public Employee(String firstName, String lastName, String jobTitle,Double tip) {
+    public Employee(String firstName, String lastName, String telephoneNumber, String jobTitle,Double tip) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.tip = tip;
         this.jobTitle = jobTitle;
+        this.telephoneNumber = telephoneNumber;
     }
 
     public String toString(){
         return firstName + " " + lastName + ", stanowisko: " + jobTitle;
+    }
+    public String toString(boolean details){
+        return firstName + " " + lastName + ", stanowisko: " + jobTitle
+                +", numer telefonu: "+ telephoneNumber+ ", wysokość napiwku: " + tip;
     }
 
     public String getLastName() {
@@ -69,7 +75,6 @@ public class Employee{
         else
             return false;
     }
-
 
     /*
     public boolean addEmployee(Employee employee, boolean addToFile){

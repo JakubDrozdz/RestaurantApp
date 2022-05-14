@@ -39,7 +39,6 @@ public class Dish {
         return this.isVegetarian;
     }
 
-
     public void setUnavailable() {
         this.available = false;
     }

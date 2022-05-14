@@ -167,7 +167,16 @@ public class Main {
             }
         }
         scan.nextLine();
-        boolean flag = employees.addToList(new Employee(firstName,lastName,jobTitle,0.0),true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
+        System.out.println("Podaj numer telefonu pracownika (9 cyfr):" );
+        String telephoneNumber = scan.nextLine();
+        Pattern pattern = Pattern.compile("\\d{9}");
+        Matcher matcher = pattern.matcher(telephoneNumber);
+        while(!matcher.matches()){
+            System.out.println("Podaj poprawną cenę: ");
+            telephoneNumber = scan.nextLine();
+            matcher = pattern.matcher(telephoneNumber);
+        }
+        boolean flag = employees.addToList(new Employee(firstName,lastName,telephoneNumber,jobTitle,0.0),true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
         System.out.println(flag ? "Pracownik dodany poprawnie" : "Pracownik nie dodany poprawnie");
     }
     private static void fireEmployee(){

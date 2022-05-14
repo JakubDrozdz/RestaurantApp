@@ -78,7 +78,7 @@ public class Container <T> implements IFileWrite, IFileReader {
                 }
             }
             if(this.objName.equals("employees")){
-                t = (T) new Employee(data[i][0],data[i][1],data[i][2],Double.parseDouble(data[i][3]));
+                t = (T) new Employee(data[i][0],data[i][1],data[i][2],data[i][3],Double.parseDouble(data[i][4]));
             }
             addToList(t,false,null);
         }
@@ -141,6 +141,7 @@ public class Container <T> implements IFileWrite, IFileReader {
             id=1;
             list.clear();
             readList();
+            writer.close();
 
         }catch(NotEnoughEmployeesException neee){
             System.out.println(neee.getMessage());
@@ -167,7 +168,7 @@ public class Container <T> implements IFileWrite, IFileReader {
         return false;
     }
     public void showData(int tId){
-        System.out.println(list.get(tId));
+        System.out.println(((Employee)list.get(tId)).toString(true));
     }
     public int getSize(){
         return list.size();

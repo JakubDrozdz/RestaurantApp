@@ -177,4 +177,7 @@ public class Container <T> implements IFileWrite, IFileReader {
     public int getSize(){
         return list.size();
     }
+    public HashMap<Integer, T> getList() {
+        return list;
+    }
 }

@@ -1,5 +1,12 @@
 package Orders;
 
-public class OrderOnSite {
+import java.util.ArrayList;
+
+public class OrderOnSite extends Order{
     private int tableNo;
+
+    public OrderOnSite(ArrayList orderList, int tableNo) {
+        super(orderList);
+        this.tableNo = tableNo;
+    }
 }

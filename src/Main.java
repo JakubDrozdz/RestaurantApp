@@ -3,8 +3,14 @@ import Employees.Delivery;
 import Employees.Employee;
 import Employees.Waiteer;
 import Menu.*;
+import Orders.Order;
+import Orders.OrderForDelivery;
+import Orders.OrderOnSite;
+import Orders.Orders;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -14,6 +20,7 @@ public class Main {
     //private static toDelete_Menu menu = new toDelete_Menu();
     private static final Container<Employee> employees= new Container<>("employees");
     private static final Scanner scan = new Scanner(System.in);
+    private static final Orders ordersList = new Orders();
     public static void main(String[] args) {
         startRestaurant();
     }
@@ -28,6 +35,7 @@ public class Main {
                 "7 - wyświetl pracowników\n" +
                 "8 - zwolnij pracownika\n" +
                 "9 - wyświetl informacje o pracowniku\n" +
+                "10 - złóż zamówienie\n" +
                 "15 - zakończ\n");
     }
     private static void startRestaurant(){
@@ -70,6 +78,9 @@ public class Main {
                     break;
                 case 9:
                     showEmployeeData();
+                    break;
+                case 10:
+                    placeOrder();
                     break;
                 default:
                     System.out.println("Brak okreslonej operacji");
@@ -222,5 +233,88 @@ public class Main {
             }
         }
         employees.showData(id);
+    }
+    private static void placeOrder(){
+        ArrayList<Integer> orderList = new ArrayList<>();
+        int action = 0;
+        String finish = "n";
+        System.out.println("Jeśli chcesz zobaczyć menu naciśnij 0\nJeśli chcesz zakończyć naciśnij y");
+        boolean end = false;
+        while(!end){
+            try{
+                System.out.println("Podaj pozycję z menu");
+                action = scan.nextInt();
+                scan.nextLine();
+                if(action == 0)
+                    menu.showList();
+                else
+                    orderList.add(action);
+                System.out.println("Czy chcesz zakończyć?");
+                finish = scan.nextLine();
+                if(finish.equals("y"))
+                    end = true;
+                else
+                    end = false;
+            }
+            catch(InputMismatchException ime){
+                System.out.println("Podaj poprawną liczbę");
+            }
+        }
+
+        System.out.println("befor");
+        for (Integer i : orderList) {
+            System.out.println(i);
+        }
+
+        ArrayList<Integer> indexToRemove = new ArrayList<>();
+        for (int i = 0; i<orderList.size();i++) {
+            int val = orderList.get(i);
+            if(val>=1 && val<=menu.getList().size()){
+                if(!menu.getList().get(orderList.get(i)).isAvailable())
+                    indexToRemove.add(i);
+            }else{
+                indexToRemove.add(i);
+            }
+        }
+        int count = 0;
+        for (Integer i : indexToRemove) {
+            orderList.remove(i - count);
+            count++;
+        }
+
+        System.out.println("after");
+        for (Integer i : orderList) {
+            System.out.println(i);
+        }
+
+        String orderType = null;
+        System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - dostawa lub 2 - na miejscu");
+        end = false;
+        Order order = null;
+        while(!end){
+            try{
+                System.out.print("Podaj numer: ");
+                action = scan.nextInt();
+                scan.nextLine();
+                switch (action){
+                    case 1:
+                        order = new OrderForDelivery(orderList,"address");
+                        end = true;
+                        break;
+                    case 2:
+                        order = new OrderOnSite(orderList,1);
+                        end = true;
+                        break;
+                    default:
+                        System.out.println("Nie ma takiej opcji");
+                }
+                System.out.println();
+            }catch(InputMismatchException ime){
+                System.out.println("Podaj poprawny numer!");
+            }
+        }
+
+        order.validate(order);
+        ordersList.addOrder(order);
     }
 }

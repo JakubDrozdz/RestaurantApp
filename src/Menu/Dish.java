@@ -16,7 +16,7 @@ public abstract class Dish {
 
     public String toString(){
         if(!available)
-            return isVegetarian ? (name + "\n" + description + "\t" + price + " zl\t(wegetarianskie)")
+            return isVegetarian ? (name + "\n" + description + "\t" + price + " zl\t(wegetarianskie) - NIEDOSTEPNE")
                 : (name + "\n" + description + "\t" + price + " zl - NIEDOSTEPNE");
         else
             return isVegetarian ? (name + "\n" + description + "\t" + price + " zl\t(wegetarianskie)")
@@ -42,4 +42,5 @@ public abstract class Dish {
     public void setUnavailable() {
         this.available = false;
     }
+    public boolean isAvailable(){return this.available;}
 }

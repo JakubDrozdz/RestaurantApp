@@ -6,7 +6,7 @@ public class OrderForDelivery extends Order{
     private String deliveryAddress;
 
     public OrderForDelivery(ArrayList orderList,String deliveryAddress) {
-        super(orderList);
+        super(orderList,true);
         this.deliveryAddress = deliveryAddress;
     }
 }

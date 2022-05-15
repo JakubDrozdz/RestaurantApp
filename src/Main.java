@@ -36,6 +36,9 @@ public class Main {
                 "8 - zwolnij pracownika\n" +
                 "9 - wyświetl informacje o pracowniku\n" +
                 "10 - złóż zamówienie\n" +
+                "11 - wyświetl wszystkie zamówienia\n" +
+                "12 - wyświetl szczegóły zamówienia\n" +
+                "13 - kolejność zamówień do realziacji\n" +
                 "15 - zakończ\n");
     }
     private static void startRestaurant(){
@@ -81,6 +84,15 @@ public class Main {
                     break;
                 case 10:
                     placeOrder();
+                    break;
+                case 11:
+                    ordersList.showOrders();
+                    break;
+                case 12:
+                    ordersList.showOrderDetails(0);
+                    break;
+                case 13:
+                    ordersList.sortedOrdersList();
                     break;
                 default:
                     System.out.println("Brak okreslonej operacji");
@@ -238,8 +250,9 @@ public class Main {
         ArrayList<Integer> orderList = new ArrayList<>();
         int action = 0;
         String finish = "n";
-        System.out.println("Jeśli chcesz zobaczyć menu naciśnij 0\nJeśli chcesz zakończyć naciśnij y");
+        System.out.println("Jeśli chcesz zobaczyć menu naciśnij 0\n");
         boolean end = false;
+        boolean show = true;
         while(!end){
             try{
                 System.out.println("Podaj pozycję z menu");
@@ -249,6 +262,10 @@ public class Main {
                     menu.showList();
                 else
                     orderList.add(action);
+                if(show){
+                    System.out.println("\nJeśli chcesz zakończyć naciśnij y");
+                    show = false;
+                }
                 System.out.println("Czy chcesz zakończyć?");
                 finish = scan.nextLine();
                 if(finish.equals("y"))
@@ -257,13 +274,9 @@ public class Main {
                     end = false;
             }
             catch(InputMismatchException ime){
+                scan.nextLine();
                 System.out.println("Podaj poprawną liczbę");
             }
-        }
-
-        System.out.println("befor");
-        for (Integer i : orderList) {
-            System.out.println(i);
         }
 
         ArrayList<Integer> indexToRemove = new ArrayList<>();
@@ -280,11 +293,6 @@ public class Main {
         for (Integer i : indexToRemove) {
             orderList.remove(i - count);
             count++;
-        }
-
-        System.out.println("after");
-        for (Integer i : orderList) {
-            System.out.println(i);
         }
 
         String orderType = null;
@@ -313,8 +321,7 @@ public class Main {
                 System.out.println("Podaj poprawny numer!");
             }
         }
-
-        order.validate(order);
         ordersList.addOrder(order);
     }
+
 }

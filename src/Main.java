@@ -301,21 +301,28 @@ public class Main {
         }
         else{
             String orderType = null;
-            System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - dostawa lub 2 - na miejscu");
+            System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - na miejscu lub 2 - z dostawą");
             end = false;
             Order order = null;
             while(!end){
+                int tableId = 0;
                 try{
                     System.out.println("Podaj numer: ");
                     action = scan.nextInt();
                     scan.nextLine();
+                    while(tableId<=0){
+                        if(action == 1){
+                            System.out.println("Wprowadź numer stolika: (1,2,...)");
+                            tableId = validateId();
+                        }
+                    }
                     switch (action){
                         case 1:
-                            order = new OrderForDelivery(orderList,"address",orderId++);
+                            order = new OrderOnSite(orderList,tableId,orderId++);
                             end = true;
                             break;
                         case 2:
-                            order = new OrderOnSite(orderList,1,orderId++);
+                            order = new OrderForDelivery(orderList,"address",orderId++);
                             end = true;
                             break;
                         default:

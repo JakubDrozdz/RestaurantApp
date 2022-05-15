@@ -1,8 +1,6 @@
-Kam;Cie;123456789;kucharz;0.0
 Jan;Kowalczyk;421432654;dostawca;0.0
 Kamil;Kamilewski;1239874556;kelner;0.0
 Janek;KLowal;531234567;kelner;0.0
 Ala;Nowak;432642123;kucharz;0.0
 Janek;Nowaczek;123321123;kelner;0.0
 Jan;Kowalczyk;444555666;kucharz;0.0
-Jan;Ktos;444333222;kucharz;0.0

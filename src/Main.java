@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class Main {
+    private static int orderId = 1;
     private static final Container<Dish> menu= new Container<>("menu");
     //private static toDelete_Menu menu = new toDelete_Menu();
     private static final Container<Employee> employees= new Container<>("employees");
@@ -135,18 +136,16 @@ public class Main {
     }
     private static void removeFromMenu(){
         System.out.println("Podaj ID dania:");
-        int id = scan.nextInt();
-        scan.nextLine();
-        if(menu.remove(id))
+        int id = validateId();
+        if(id>=0 && menu.remove(id))
             System.out.println("Usunięto poprawnie!");
         else
             System.out.println("Nie można usunąć");
     }
     private static void setUnavailable(){
         System.out.println("Podaj ID dania:");
-        int id = scan.nextInt();
-        scan.nextLine();
-        if(menu.setUnavailable(id))
+        int id = validateId();
+        if(id>=0 && menu.setUnavailable(id))
             System.out.println("Danie oznaczone jako niedostepne!");
         else
             System.out.println("Nie można oznaczyć dania");
@@ -218,9 +217,8 @@ public class Main {
     }
     private static void fireEmployee(){
         System.out.println("Podaj ID pracownika:");
-        int id = scan.nextInt();
-        scan.nextLine();
-        if(employees.remove(id))
+        int id = validateId();
+        if(id>=0 && employees.remove(id))
             System.out.println("Pracownik zwolniony!");
         else
             System.out.println("Nie można usunąć");
@@ -283,9 +281,13 @@ public class Main {
         for (int i = 0; i<orderList.size();i++) {
             int val = orderList.get(i);
             if(val>=1 && val<=menu.getList().size()){
-                if(!menu.getList().get(orderList.get(i)).isAvailable())
+                if(!menu.getList().get(orderList.get(i)).isAvailable()){
                     indexToRemove.add(i);
+                    System.out.println("Danie: " + menu.getList().get(orderList.get(i)).getName() + " jest niedostępne - zostanie usunięte z zamówienia!");
+                }
+
             }else{
+                System.out.println("Nie posiadamy dania o id " + orderList.get(i));
                 indexToRemove.add(i);
             }
         }
@@ -294,39 +296,52 @@ public class Main {
             orderList.remove(i - count);
             count++;
         }
-
-        String orderType = null;
-        System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - dostawa lub 2 - na miejscu");
-        end = false;
-        Order order = null;
-        while(!end){
-            try{
-                System.out.print("Podaj numer: ");
-                action = scan.nextInt();
-                scan.nextLine();
-                switch (action){
-                    case 1:
-                        order = new OrderForDelivery(orderList,"address");
-                        end = true;
-                        break;
-                    case 2:
-                        order = new OrderOnSite(orderList,1);
-                        end = true;
-                        break;
-                    default:
-                        System.out.println("Nie ma takiej opcji");
-                }
-                System.out.println();
-            }catch(InputMismatchException ime){
-                System.out.println("Podaj poprawny numer!");
-            }
+        if(orderList.size() == 0){
+            System.out.println("Nie wybrałeś żadnej poprawnej pozycji z menu!");
         }
-        ordersList.addOrder(order);
+        else{
+            String orderType = null;
+            System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - dostawa lub 2 - na miejscu");
+            end = false;
+            Order order = null;
+            while(!end){
+                try{
+                    System.out.println("Podaj numer: ");
+                    action = scan.nextInt();
+                    scan.nextLine();
+                    switch (action){
+                        case 1:
+                            order = new OrderForDelivery(orderList,"address",orderId++);
+                            end = true;
+                            break;
+                        case 2:
+                            order = new OrderOnSite(orderList,1,orderId++);
+                            end = true;
+                            break;
+                        default:
+                            System.out.println("Nie ma takiej opcji");
+                    }
+                }catch(InputMismatchException ime){
+                    System.out.println("Podaj poprawny numer!");
+                }
+            }
+            ordersList.addOrder(order);
+        }
     }
     private static void showOrderDetails(){
         System.out.println("Podaj ID zamówienia:");
-        int id = scan.nextInt();
+        int id = validateId();
+        ordersList.showOrderDetails(id-1,menu.getList());
+    }
+
+    private static int validateId(){
+        int id = -1;
+        try{
+            id = scan.nextInt();
+        }catch(InputMismatchException ime){
+            System.out.println("Błąd! Podaj cyfrę!!!");
+        }
         scan.nextLine();
-        ordersList.showOrderDetails(id-1);
+        return id;
     }
 }

@@ -40,6 +40,7 @@ public class Main {
                 "11 - wyświetl wszystkie zamówienia\n" +
                 "12 - wyświetl szczegóły zamówienia\n" +
                 "13 - kolejność zamówień do realziacji\n" +
+                "14 - losowe zamówienie\n" +
                 "15 - zakończ\n");
     }
     private static void startRestaurant(){
@@ -95,6 +96,9 @@ public class Main {
                 case 13:
                     ordersList.sortedOrdersList();
                     break;
+                case 14:
+                    randomOrder();
+                    break;
                 default:
                     System.out.println("Brak okreslonej operacji");
             }
@@ -137,6 +141,7 @@ public class Main {
     private static void removeFromMenu(){
         System.out.println("Podaj ID dania:");
         int id = validateId();
+        scan.nextLine();
         if(id>=0 && menu.remove(id))
             System.out.println("Usunięto poprawnie!");
         else
@@ -145,6 +150,7 @@ public class Main {
     private static void setUnavailable(){
         System.out.println("Podaj ID dania:");
         int id = validateId();
+        scan.nextLine();
         if(id>=0 && menu.setUnavailable(id))
             System.out.println("Danie oznaczone jako niedostepne!");
         else
@@ -218,6 +224,7 @@ public class Main {
     private static void fireEmployee(){
         System.out.println("Podaj ID pracownika:");
         int id = validateId();
+        scan.nextLine();
         if(id>=0 && employees.remove(id))
             System.out.println("Pracownik zwolniony!");
         else
@@ -276,8 +283,7 @@ public class Main {
                 System.out.println("Podaj poprawną liczbę");
             }
         }
-
-        ArrayList<Integer> indexToRemove = new ArrayList<>();
+        /*ArrayList<Integer> indexToRemove = new ArrayList<>();
         for (int i = 0; i<orderList.size();i++) {
             int val = orderList.get(i);
             if(val>=1 && val<=menu.getList().size()){
@@ -295,7 +301,8 @@ public class Main {
         for (Integer i : indexToRemove) {
             orderList.remove(i - count);
             count++;
-        }
+        }*/
+        orderList = validateOrder(orderList);
         if(orderList.size() == 0){
             System.out.println("Nie wybrałeś żadnej poprawnej pozycji z menu!");
         }
@@ -305,6 +312,7 @@ public class Main {
             end = false;
             Order order = null;
             while(!end){
+                String address = "";
                 int tableId = 0;
                 try{
                     System.out.println("Podaj numer: ");
@@ -315,6 +323,10 @@ public class Main {
                             System.out.println("Wprowadź numer stolika: (1,2,...)");
                             tableId = validateId();
                         }
+                        if(action == 2)
+                            System.out.println("Wprowadź adres dostawy");
+                            address = scan.nextLine();
+                            break;
                     }
                     switch (action){
                         case 1:
@@ -322,7 +334,7 @@ public class Main {
                             end = true;
                             break;
                         case 2:
-                            order = new OrderForDelivery(orderList,"address",orderId++);
+                            order = new OrderForDelivery(orderList,address,orderId++);
                             end = true;
                             break;
                         default:
@@ -340,6 +352,64 @@ public class Main {
         int id = validateId();
         ordersList.showOrderDetails(id-1,menu.getList());
     }
+    private static void randomOrder(){
+        ArrayList<Integer> orderList = new ArrayList<>();
+        System.out.println("Podaj ilość pozycji z menu do wylosowania");
+        int noOfDish = validateId();
+        if(noOfDish > 0){
+            int size = menu.getSize();
+            for(Integer i = 1; i <= noOfDish; i++){
+                int randNo = (int)(Math.random() * size) + 1;
+                if(!orderList.contains(randNo))
+                    orderList.add(randNo);
+                else
+                    i--;
+            }
+            orderList = validateOrder(orderList);
+            if(orderList.size() == 0){
+                System.out.println("Losuję jeszcze raz");
+                randomOrder();
+            }
+            boolean end = false;
+            int action = -1;
+            String orderType = null;
+            System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - na miejscu lub 2 - z dostawą");
+            while(!end){
+                String address = "";
+                int tableId = 0;
+                try{
+                    System.out.println("Podaj numer: ");
+                    action = scan.nextInt();
+                    scan.nextLine();
+                    while(tableId<=0){
+                        if(action == 1){
+                            System.out.println("Wprowadź numer stolika: (1,2,...)");
+                            tableId = validateId();
+                        }
+                        if(action == 2)
+                            System.out.println("Wprowadź adres dostawy");
+                        address = scan.nextLine();
+                        break;
+                    }
+                    switch (action){
+                        case 1:
+                            ordersList.addOrder(new OrderOnSite(orderList,tableId,orderId++));
+                            end = true;
+                            break;
+                        case 2:
+                            ordersList.addOrder(new OrderForDelivery(orderList,address,orderId++));
+                            end = true;
+                            break;
+                        default:
+                            System.out.println("Nie ma takiej opcji");
+                    }
+                }
+                catch(InputMismatchException ime){
+                    System.out.println("Podaj poprawny numer!");
+                }
+            }
+        }
+    }
 
     private static int validateId(){
         int id = -1;
@@ -348,7 +418,28 @@ public class Main {
         }catch(InputMismatchException ime){
             System.out.println("Błąd! Podaj cyfrę!!!");
         }
-        scan.nextLine();
         return id;
+    }
+    private static ArrayList<Integer> validateOrder(ArrayList<Integer> orderList){
+        ArrayList<Integer> indexToRemove = new ArrayList<>();
+        for (int i = 0; i<orderList.size();i++) {
+            int val = orderList.get(i);
+            if(val>=1 && val<=menu.getList().size()){
+                if(!menu.getList().get(orderList.get(i)).isAvailable()){
+                    indexToRemove.add(i);
+                    System.out.println("Danie: " + menu.getList().get(orderList.get(i)).getName() + " jest niedostępne - zostanie usunięte z zamówienia!");
+                }
+
+            }else{
+                System.out.println("Nie posiadamy dania o id " + orderList.get(i));
+                indexToRemove.add(i);
+            }
+        }
+        int count = 0;
+        for (Integer j : indexToRemove) {
+            orderList.remove(j - count);
+            count++;
+        }
+        return orderList;
     }
 }

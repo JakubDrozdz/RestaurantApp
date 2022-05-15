@@ -17,7 +17,10 @@ public class Orders {
         ordersList.forEach((e)-> System.out.println((i++)+". "+e));
     }
     public void showOrderDetails(int id){
-        System.out.println(ordersList.get(id));
+        if(id >= 0 && id < ordersList.size())
+            System.out.println(ordersList.get(id));
+        else
+            System.out.println("Nie ma takiego zamówienia");
     }
     public void sortedOrdersList(){
         ordersList.stream().sorted(Comparator.comparing(Order::isForDelivery)).forEach(e-> System.out.println(e));

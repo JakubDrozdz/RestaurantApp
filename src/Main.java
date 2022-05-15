@@ -89,7 +89,7 @@ public class Main {
                     ordersList.showOrders();
                     break;
                 case 12:
-                    ordersList.showOrderDetails(0);
+                    showOrderDetails();
                     break;
                 case 13:
                     ordersList.sortedOrdersList();
@@ -323,5 +323,10 @@ public class Main {
         }
         ordersList.addOrder(order);
     }
-
+    private static void showOrderDetails(){
+        System.out.println("Podaj ID zamówienia:");
+        int id = scan.nextInt();
+        scan.nextLine();
+        ordersList.showOrderDetails(id-1);
+    }
 }

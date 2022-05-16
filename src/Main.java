@@ -8,10 +8,11 @@ import Orders.OrderForDelivery;
 import Orders.OrderOnSite;
 import Orders.Orders;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.sql.Time;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -22,7 +23,60 @@ public class Main {
     private static final Container<Employee> employees= new Container<>("employees");
     private static final Scanner scan = new Scanner(System.in);
     private static final Orders ordersList = new Orders();
+    private static final Orders ordersDone = new Orders();
+
+    private static RunningRestaurant restaurant = new RunningRestaurant(){
+        @Override
+        public void run() {
+            /*while(isInterrupted()){
+                if(ordersList.getSize()>=1){
+                    ArrayList<Order> newList = ordersList.getList();
+                    newList = ordersList.sortedOrdersListBgc();
+                    if(newList.size() > 0){
+                        for (int i = 0; i < newList.size(); i++) {
+                            restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
+                            ordersDone.addOrder(newList.get(i));
+                            try {
+                                Thread.sleep(15000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        ordersList.clear();
+                    }
+                }
+            }*/
+        }
+    };
+    private static Thread t = new Thread(restaurant);
+    private static Timer timer = new Timer();
     public static void main(String[] args) {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(ordersList.getSize()>=1){
+                    ArrayList<Order> ordersDoneStream = ordersDone.getList();
+                    ArrayList<Order> newList = ordersList.getList();
+                    newList = ordersList.sortedOrdersListBgc();
+                    if(newList.size() > 0){
+                        int counter = 0;
+                        for (int i = 0; i < newList.size(); i++) {
+                            if(!ordersDoneStream.contains(newList.get(i))){
+                                restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
+                                ordersDone.addOrder(newList.get(i));
+                                ordersList.delete(newList.get(i).getId());
+                            }
+                            try {
+                                Thread.sleep(10000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }, 0, 1000);
+
         startRestaurant();
     }
     private static void printActionList(){
@@ -41,7 +95,8 @@ public class Main {
                 "12 - wyświetl szczegóły zamówienia\n" +
                 "13 - kolejność zamówień do realziacji\n" +
                 "14 - losowe zamówienie\n" +
-                "15 - zakończ\n");
+                "15 - zrealizowane zamówienia\n" +
+                "20 - zakończ\n");
     }
     private static void startRestaurant(){
         System.out.println("Witamy w systemie obsługi restauracji XYZ!");
@@ -55,7 +110,7 @@ public class Main {
         }
 
         scan.nextLine();
-        while(actionChoosen != 15){
+        while(actionChoosen != 20){
             switch(actionChoosen){
                 case 1:
                     printActionList();
@@ -99,6 +154,15 @@ public class Main {
                 case 14:
                     randomOrder();
                     break;
+                case 15:
+                    ordersDone.showOrders();
+                    break;
+                case 16:
+                    restaurant.addDailyEarnings(15d);
+                    break;
+                case 17:
+                    System.out.println(restaurant.getDailyEarnings());
+                    break;
                 default:
                     System.out.println("Brak okreslonej operacji");
             }
@@ -111,7 +175,8 @@ public class Main {
             }
             scan.nextLine();
         }
-
+        timer.cancel();
+        timer.purge();
     }
     private static void addToMenu(){
         System.out.println("Podaj nazwę dania:" );
@@ -316,7 +381,7 @@ public class Main {
                 int tableId = 0;
                 try{
                     System.out.println("Podaj numer: ");
-                    action = scan.nextInt();
+                    action = validateId();
                     scan.nextLine();
                     while(tableId<=0){
                         if(action == 1){
@@ -340,11 +405,11 @@ public class Main {
                         default:
                             System.out.println("Nie ma takiej opcji");
                     }
+                    ordersList.addOrder(order);
                 }catch(InputMismatchException ime){
                     System.out.println("Podaj poprawny numer!");
                 }
             }
-            ordersList.addOrder(order);
         }
     }
     private static void showOrderDetails(){

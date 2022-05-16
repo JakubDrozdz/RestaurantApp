@@ -1,6 +1,8 @@
 package Orders;
 
 import Menu.Dish;
+
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public abstract class Order {
     protected String deliveryAddress;
     protected int tableNo;
     protected boolean isReady;
+    protected double total;
     public Order(ArrayList orderList,boolean forDelivery,int id) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/mm/yyyy HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -23,6 +26,7 @@ public abstract class Order {
         this.forDelivery = forDelivery;
         this.id = id;
         this.isReady = false;
+        this.total = 0;
     }
 
     @Override
@@ -45,5 +49,12 @@ public abstract class Order {
 
     public int getId() {
         return id;
+    }
+
+    public double getTotal(HashMap<Integer, Dish> menu){
+        for (int i = 0; i < orderList.size(); i++) {
+            total += Double.parseDouble(menu.get(orderList.get(i)).getPrize());
+        }
+        return  total;
     }
 }

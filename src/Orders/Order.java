@@ -57,4 +57,7 @@ public abstract class Order {
         }
         return  total;
     }
+    public int getMenuPositionsNo(){
+        return orderList.size();
+    }
 }

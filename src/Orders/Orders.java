@@ -52,4 +52,7 @@ public class Orders {
             }
         }
     }
+    public int getMenuPositionsNo(int id){
+        return ordersList.get(id).getMenuPositionsNo();
+    }
 }

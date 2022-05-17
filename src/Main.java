@@ -54,23 +54,30 @@ public class Main {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(ordersList.getSize()>=1){
+                if(ordersList.getSize()>=1 || restaurant.isInterrupted()){
                     ArrayList<Order> ordersDoneStream = ordersDone.getList();
                     ArrayList<Order> newList = ordersList.getList();
                     newList = ordersList.sortedOrdersListBgc();
                     if(newList.size() > 0){
-                        int counter = 0;
+
                         for (int i = 0; i < newList.size(); i++) {
+                            int noOfMenuPositions = ordersList.getMenuPositionsNo(0);
+                            int noOfChefs = (int) employees.getList().entrySet().stream().filter(e -> e.getValue().getJobTitle().equals("kucharz")).count();
+                            int sleepTime = 20000*noOfMenuPositions;
+                            if(noOfChefs>1){
+                                sleepTime/=noOfChefs;
+                            }
+                            try {
+                                Thread.sleep(sleepTime);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             if(!ordersDoneStream.contains(newList.get(i))){
                                 restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
                                 ordersDone.addOrder(newList.get(i));
                                 ordersList.delete(newList.get(i).getId());
                             }
-                            try {
-                                Thread.sleep(10000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+
                         }
                     }
                 }
@@ -227,7 +234,7 @@ public class Main {
         System.out.println("Podaj nazwisko: ");
         String lastName = scan.nextLine();
         String jobTitle = null;
-        System.out.println("Wtbierz stanowisko: " +
+        System.out.println("Wybierz stanowisko: " +
                 "\n1 - kelner" +
                 "\n2 - dostawca" +
                 "\n3 - kucharz");

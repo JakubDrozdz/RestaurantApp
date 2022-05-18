@@ -20,6 +20,7 @@ public abstract class Order {
     protected double total;
     protected DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/mm/yyyy HH:mm:ss");
     protected LocalDateTime now;
+    protected boolean lapsed;
     public Order(ArrayList orderList,boolean forDelivery,int id) {
         this.now = LocalDateTime.now();
         this.dateOfOrder = dtf.format(now);
@@ -28,13 +29,14 @@ public abstract class Order {
         this.id = id;
         this.isReady = false;
         this.total = 0;
+        this.lapsed = false;
     }
 
     @Override
     public String toString() {
         return (id+". data zamówienia: " + dateOfOrder +
                 ", zamówione pozycje z menu: " + orderList +
-                ", z dostawą: " + (forDelivery?"tak":"nie"));
+                ", z dostawą: " + (forDelivery?"tak":"nie") + lapsed);
     }
     public void toString(HashMap<Integer, Dish> menu) {
         System.out.println(
@@ -64,5 +66,13 @@ public abstract class Order {
 
     public LocalDateTime getDateOfOrder() {
         return now;
+    }
+
+    public boolean isLapsed() {
+        return lapsed;
+    }
+
+    public void setLapsed(boolean lapsed) {
+        this.lapsed = lapsed;
     }
 }

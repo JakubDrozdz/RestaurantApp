@@ -8,16 +8,13 @@ import Orders.OrderForDelivery;
 import Orders.OrderOnSite;
 import Orders.Orders;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
+
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
 
 public class Main {
     private static int orderId = 1;
@@ -59,13 +56,23 @@ public class Main {
             public void run() {
                 if(ordersList.getSize()>=1 || restaurant.isInterrupted()){
                     ArrayList<Order> ordersDoneStream = ordersDone.getList();
-                    ArrayList<Order> newList = ordersList.getList();
+                    List<Order> newList = ordersList.getList();
                     newList = ordersList.sortedOrdersListBgc();
+                    for (int i = 0; i < newList.size(); i++) {
+                        if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusSeconds(10))) {
+                            newList.get(i).setLapsed(true);
+                            ordersList.getOrder(i).setLapsed(true);
+                        }
+                    }
+                    newList = ordersList.sortedOrdersListBgc();
+                    if(newList.stream().filter(Order::isLapsed).count()>=1)
+                        Collections.reverse(newList);
+
                     if(newList.size() > 0){
                         for (int i = 0; i < newList.size(); i++) {
                             int noOfMenuPositions = ordersList.getMenuPositionsNo(0);
                             int noOfChefs = (int) employees.getList().entrySet().stream().filter(e -> e.getValue().getJobTitle().equals("kucharz")).count();
-                            int sleepTime = 20000*noOfMenuPositions;
+                            int sleepTime = 10000*noOfMenuPositions;
                             if(noOfChefs>1){
                                 sleepTime/=(((noOfChefs*5)+100)/100d);
                             }
@@ -74,10 +81,13 @@ public class Main {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusMinutes(2))){
-                                moveBetweenOrderList(newList,i);
-                            }
                             if(!ordersDoneStream.contains(newList.get(i))){
+                                if(newList.get(i).isLapsed()) {
+                                    restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()) * 0.8);
+                                }
+                                else{
+                                    restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
+                                }
                                 moveBetweenOrderList(newList,i);
                             }
 
@@ -86,8 +96,19 @@ public class Main {
                 }
             }
         }, 0, 1000);
-
-        startRestaurant();
+        start();
+    }
+    private static void start(){
+        System.out.println("Czy rozpocząć pracę restauracji? [y/n]:");
+        String action = scan.nextLine();
+        if(action.equals("y")){
+            startRestaurant();
+        }
+        else{
+            System.out.println("Koniec!");
+            timer.cancel();
+            timer.purge();
+        }
     }
     private static void printActionList(){
         System.out.println("Wybierz odpowiednią cyfrę w celu wykonania konkretnej operacji:");
@@ -168,9 +189,6 @@ public class Main {
                     ordersDone.showOrders();
                     break;
                 case 16:
-                    restaurant.addDailyEarnings(15d);
-                    break;
-                case 17:
                     System.out.println(restaurant.getDailyEarnings());
                     break;
                 default:
@@ -485,8 +503,10 @@ public class Main {
             }
         }
     }
-    private static void moveBetweenOrderList(ArrayList<Order> newList, int i){
-        restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList())*0.8);
+    private static void setlapsed(){
+        ordersList.getOrder(1).setLapsed(true);
+    }
+    private static void moveBetweenOrderList(List<Order> newList, int i){
         ordersDone.addOrder(newList.get(i));
         ordersList.delete(newList.get(i).getId());
     }

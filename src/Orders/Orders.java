@@ -2,10 +2,7 @@ package Orders;
 
 import Menu.Dish;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Orders {
     private ArrayList<Order> ordersList = new ArrayList<>();
@@ -29,7 +26,7 @@ public class Orders {
         ordersList.stream().sorted(Comparator.comparing(Order::isForDelivery)).forEach(e-> System.out.println(e));
     }
     public ArrayList sortedOrdersListBgc(){
-        List<Order> list = ordersList.stream().sorted(Comparator.comparing(Order::isForDelivery)).toList();
+        List<Order> list = ordersList.stream().sorted(Comparator.comparing((Order::isForDelivery))).toList().stream().sorted(Comparator.comparing(Order::isLapsed)).toList();
         ArrayList<Order> aList = new ArrayList<>(list);
         return aList;
     }
@@ -41,9 +38,6 @@ public class Orders {
     }
     public ArrayList getList(){
         return ordersList;
-    }
-    public void clear(){
-        ordersList.clear();
     }
     public  void delete(int id){
         for (int i = 0; i < ordersList.size(); i++) {

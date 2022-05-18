@@ -18,9 +18,10 @@ public abstract class Order {
     protected int tableNo;
     protected boolean isReady;
     protected double total;
+    protected DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/mm/yyyy HH:mm:ss");
+    protected LocalDateTime now;
     public Order(ArrayList orderList,boolean forDelivery,int id) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/mm/yyyy HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
+        this.now = LocalDateTime.now();
         this.dateOfOrder = dtf.format(now);
         this.orderList = orderList;
         this.forDelivery = forDelivery;
@@ -55,9 +56,13 @@ public abstract class Order {
         for (int i = 0; i < orderList.size(); i++) {
             total += Double.parseDouble(menu.get(orderList.get(i)).getPrize());
         }
-        return  total;
+        return  Math.round(total*100)/100D;
     }
     public int getMenuPositionsNo(){
         return orderList.size();
+    }
+
+    public LocalDateTime getDateOfOrder() {
+        return now;
     }
 }

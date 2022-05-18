@@ -9,6 +9,9 @@ import Orders.OrderOnSite;
 import Orders.Orders;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,23 +62,23 @@ public class Main {
                     ArrayList<Order> newList = ordersList.getList();
                     newList = ordersList.sortedOrdersListBgc();
                     if(newList.size() > 0){
-
                         for (int i = 0; i < newList.size(); i++) {
                             int noOfMenuPositions = ordersList.getMenuPositionsNo(0);
                             int noOfChefs = (int) employees.getList().entrySet().stream().filter(e -> e.getValue().getJobTitle().equals("kucharz")).count();
                             int sleepTime = 20000*noOfMenuPositions;
                             if(noOfChefs>1){
-                                sleepTime/=noOfChefs;
+                                sleepTime/=(((noOfChefs*5)+100)/100d);
                             }
                             try {
                                 Thread.sleep(sleepTime);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusMinutes(2))){
+                                moveBetweenOrderList(newList,i);
+                            }
                             if(!ordersDoneStream.contains(newList.get(i))){
-                                restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
-                                ordersDone.addOrder(newList.get(i));
-                                ordersList.delete(newList.get(i).getId());
+                                moveBetweenOrderList(newList,i);
                             }
 
                         }
@@ -482,6 +485,12 @@ public class Main {
             }
         }
     }
+    private static void moveBetweenOrderList(ArrayList<Order> newList, int i){
+        restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList())*0.8);
+        ordersDone.addOrder(newList.get(i));
+        ordersList.delete(newList.get(i).getId());
+    }
+
 
     private static int validateId(){
         int id = -1;

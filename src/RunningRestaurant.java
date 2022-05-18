@@ -16,10 +16,10 @@ public class RunningRestaurant extends Thread{
 
     }
     public Double getDailyEarnings() {
-        return dailyEarnings;
+        return Math.round(dailyEarnings*100)/100D;
     }
 
     public void addDailyEarnings(Double dailyEarnings) {
-        this.dailyEarnings += dailyEarnings;
+        this.dailyEarnings += Math.round(dailyEarnings*100)/100D;
     }
 }

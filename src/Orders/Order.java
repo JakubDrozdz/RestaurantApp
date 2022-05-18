@@ -36,7 +36,7 @@ public abstract class Order {
     public String toString() {
         return (id+". data zamówienia: " + dateOfOrder +
                 ", zamówione pozycje z menu: " + orderList +
-                ", z dostawą: " + (forDelivery?"tak":"nie") + lapsed);
+                ", z dostawą: " + (forDelivery?"tak":"nie") + (isLapsed()?", przedawnione":""));
     }
     public void toString(HashMap<Integer, Dish> menu) {
         System.out.println(

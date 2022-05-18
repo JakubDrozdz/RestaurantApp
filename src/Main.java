@@ -8,6 +8,7 @@ import Orders.OrderForDelivery;
 import Orders.OrderOnSite;
 import Orders.Orders;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import java.util.*;
@@ -24,6 +25,13 @@ public class Main {
     private static final Scanner scan = new Scanner(System.in);
     private static final Orders ordersList = new Orders();
     private static final Orders ordersDone = new Orders();
+    private static double tip = 0d;
+    private static int waiteerId = 0;
+    private static int deliveryId = 0;
+    private static List<Map.Entry<Integer, Employee>> waiteers = employees.getList().entrySet().stream().filter(e->e.getValue()
+            .getJobTitle().equals("kelner")).toList();
+    private static List<Map.Entry<Integer, Employee>> delivers = employees.getList().entrySet().stream().filter(e->e.getValue()
+            .getJobTitle().equals("dostawca")).toList();
 
     private static RunningRestaurant restaurant = new RunningRestaurant(){
         @Override
@@ -54,14 +62,22 @@ public class Main {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(ordersList.getSize()>=1 || restaurant.isInterrupted()){
+
+                if(ordersList.getSize()>=1 || (restaurant.isInterrupted() && ordersList.getSize() == 0)){
                     ArrayList<Order> ordersDoneStream = ordersDone.getList();
                     List<Order> newList = ordersList.getList();
                     newList = ordersList.sortedOrdersListBgc();
                     for (int i = 0; i < newList.size(); i++) {
-                        if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusSeconds(10))) {
-                            newList.get(i).setLapsed(true);
-                            ordersList.getOrder(i).setLapsed(true);
+                        if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusSeconds(5))) {
+                            int rand = (int)(Math.random()*(2));
+                            if(rand == 1){
+                                newList.get(i).setLapsed(true);
+                                ordersList.getOrder(i).setLapsed(true);
+                            }
+                            else{
+                                ordersList.delete(newList.get(i).getId());
+                            }
+
                         }
                     }
                     newList = ordersList.sortedOrdersListBgc();
@@ -72,7 +88,7 @@ public class Main {
                         for (int i = 0; i < newList.size(); i++) {
                             int noOfMenuPositions = ordersList.getMenuPositionsNo(0);
                             int noOfChefs = (int) employees.getList().entrySet().stream().filter(e -> e.getValue().getJobTitle().equals("kucharz")).count();
-                            int sleepTime = 10000*noOfMenuPositions;
+                            int sleepTime = 20000*noOfMenuPositions;
                             if(noOfChefs>1){
                                 sleepTime/=(((noOfChefs*5)+100)/100d);
                             }
@@ -81,12 +97,18 @@ public class Main {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
                             if(!ordersDoneStream.contains(newList.get(i))){
                                 if(newList.get(i).isLapsed()) {
                                     restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()) * 0.8);
                                 }
                                 else{
                                     restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
+                                }
+                                double orderPreparationTime = Duration.between(newList.get(i).getDateOfOrder(),LocalDateTime.now()).toSeconds();
+                                if(orderPreparationTime < 20){
+                                    double tipAmount = newList.get(i).getTotal(menu.getList())*((20-orderPreparationTime)*2)/100d;
+                                    employees.setTip(tipAmount);
                                 }
                                 moveBetweenOrderList(newList,i);
                             }
@@ -202,6 +224,10 @@ public class Main {
                 System.out.println("Podaj poprawną liczbę");
             }
             scan.nextLine();
+            if(actionChoosen == 20){
+                System.out.println("Zamykanie restauracji - realizacja ostatniego zamówień");
+                ordersList.sortedOrdersList();
+            }
         }
         timer.cancel();
         timer.purge();
@@ -503,15 +529,11 @@ public class Main {
             }
         }
     }
-    private static void setlapsed(){
-        ordersList.getOrder(1).setLapsed(true);
-    }
+
     private static void moveBetweenOrderList(List<Order> newList, int i){
         ordersDone.addOrder(newList.get(i));
         ordersList.delete(newList.get(i).getId());
     }
-
-
     private static int validateId(){
         int id = -1;
         try{

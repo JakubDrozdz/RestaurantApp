@@ -14,6 +14,7 @@ public abstract class Employee{
     protected String telephoneNumber;
     protected Double tip;
     protected String jobTitle;
+    protected boolean isFree;
 
     public Employee(String firstName, String lastName, String telephoneNumber, String jobTitle,Double tip) {
         this.lastName = lastName;
@@ -21,6 +22,7 @@ public abstract class Employee{
         this.tip = tip;
         this.jobTitle = jobTitle;
         this.telephoneNumber = telephoneNumber;
+        this.isFree = true;
     }
 
     public String toString(){
@@ -76,6 +78,17 @@ public abstract class Employee{
             return false;
     }
 
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
+    }
+
+    public void setTip(Double tip) {
+        this.tip = tip;
+    }
     /*
     public boolean addEmployee(Employee employee, boolean addToFile){
         boolean flag = false;

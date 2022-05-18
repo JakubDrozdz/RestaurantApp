@@ -180,4 +180,8 @@ public class Container <T> implements IFileWrite, IFileReader {
     public HashMap<Integer, T> getList() {
         return list;
     }
+    public void setTip(double val){
+        if(this.objName.equals("employees"))
+            ((Employee)list.get(0)).setTip(val);
+    }
 }

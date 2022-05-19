@@ -18,7 +18,6 @@ public class Container <T> implements IFileWrite, IFileReader {
         this.id = 1;
         this.objName = objName;
         this.filepath ="resources/" + this.objName + "List.txt";
-        //this.filepath ="/Users/drozdj01/OneDrive - Polsko-Japońska Akademia Technik Komputerowych/Studia/sem_II/GUI/s24871_pro1/resources/" + this.objName + "List.txt";//file path which works in when runing program from terminal
         readList();
     }
     public boolean addToList(T t, boolean addToFile, String dataString){
@@ -39,32 +38,6 @@ public class Container <T> implements IFileWrite, IFileReader {
         });
     }
     private void readList(){
-        /*try{
-            BufferedReader br = new BufferedReader(new FileReader(filepath));
-            String line;
-            while((line = br.readLine()) != null){
-                String[] data = line.split(";");
-                T t = null;
-                if(this.objName.equals("menu")){
-                    if(data[data.length-1].equals("true")){
-                        t = (T) new DishNoMeat(data[0],data[1],data[2],true);
-                    }
-                    else{
-                        t = (T) new DishMeat(data[0],data[1],data[2],false);
-                    }
-                }
-                if(this.objName.equals("employees")){
-                    t = (T) new Employee(data[0],data[1],data[2],Double.parseDouble(data[3]));
-                }
-                addToList(t,false,null);
-            }
-            br.close();
-        }catch(FileNotFoundException fnfe){
-            System.out.println("File not found!");
-        }
-        catch(IOException e){
-            System.out.println("Read error");
-        }*/
         String[][] data = fileRead(filepath);
         for (int i = 0; i < data.length; i++) {
             T t = null;
@@ -86,7 +59,6 @@ public class Container <T> implements IFileWrite, IFileReader {
             }
             addToList(t,false,null);
         }
-
     }
     public boolean remove(int tId){
         boolean flag=false;
@@ -179,9 +151,5 @@ public class Container <T> implements IFileWrite, IFileReader {
     }
     public HashMap<Integer, T> getList() {
         return list;
-    }
-    public void setTip(double val){
-        if(this.objName.equals("employees"))
-            ((Employee)list.get(0)).setTip(val);
     }
 }

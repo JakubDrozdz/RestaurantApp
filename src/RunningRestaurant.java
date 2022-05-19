@@ -1,9 +1,3 @@
-import Menu.Dish;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
-
 public class RunningRestaurant extends Thread{
     private Double dailyEarnings;
 

@@ -5,3 +5,4 @@ Ala;Nowak;432642123;kucharz;0.0
 Janek;Nowaczek;123321123;kelner;0.0
 Jan;Kowalczyk;444555666;kucharz;0.0
 Jan;Koks;123123123;kucharz;0.0
+Jan;Kowal;123123123;dostawca;0.0

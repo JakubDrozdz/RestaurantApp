@@ -6,10 +6,6 @@ import java.util.*;
 
 public class Orders {
     private ArrayList<Order> ordersList = new ArrayList<>();
-    //private Integer i;
-    public Orders() {
-        //this.i=1;
-    }
     public void addOrder(Order o){
         ordersList.add(o);
     }

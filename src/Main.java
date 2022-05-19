@@ -13,49 +13,25 @@ import java.time.LocalDateTime;
 
 import java.util.*;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
 
 public class Main {
     private static int orderId = 1;
     private static final Container<Dish> menu= new Container<>("menu");
-    //private static toDelete_Menu menu = new toDelete_Menu();
     private static final Container<Employee> employees= new Container<>("employees");
     private static final Scanner scan = new Scanner(System.in);
     private static final Orders ordersList = new Orders();
     private static final Orders ordersDone = new Orders();
-    private static double tip = 0d;
-    private static int waiteerId = 0;
-    private static int deliveryId = 0;
-    private static List<Map.Entry<Integer, Employee>> waiteers = employees.getList().entrySet().stream().filter(e->e.getValue()
-            .getJobTitle().equals("kelner")).toList();
+    private static int empId = 0;
+
     private static List<Map.Entry<Integer, Employee>> delivers = employees.getList().entrySet().stream().filter(e->e.getValue()
             .getJobTitle().equals("dostawca")).toList();
+    private static List<Map.Entry<Integer, Employee>> waiteers = employees.getList().entrySet().stream().filter(e->e.getValue()
+            .getJobTitle().equals("kelner")).toList();
 
-    private static RunningRestaurant restaurant = new RunningRestaurant(){
-        @Override
-        public void run() {
-            /*while(isInterrupted()){
-                if(ordersList.getSize()>=1){
-                    ArrayList<Order> newList = ordersList.getList();
-                    newList = ordersList.sortedOrdersListBgc();
-                    if(newList.size() > 0){
-                        for (int i = 0; i < newList.size(); i++) {
-                            restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
-                            ordersDone.addOrder(newList.get(i));
-                            try {
-                                Thread.sleep(15000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        ordersList.clear();
-                    }
-                }
-            }*/
-        }
-    };
+    private static RunningRestaurant restaurant = new RunningRestaurant();
     private static Thread t = new Thread(restaurant);
     private static Timer timer = new Timer();
     public static void main(String[] args) {
@@ -65,10 +41,9 @@ public class Main {
 
                 if(ordersList.getSize()>=1 || (restaurant.isInterrupted() && ordersList.getSize() == 0)){
                     ArrayList<Order> ordersDoneStream = ordersDone.getList();
-                    List<Order> newList = ordersList.getList();
-                    newList = ordersList.sortedOrdersListBgc();
+                    List<Order> newList = ordersList.sortedOrdersListBgc();
                     for (int i = 0; i < newList.size(); i++) {
-                        if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusSeconds(5))) {
+                        if(LocalDateTime.now().isAfter(newList.get(i).getDateOfOrder().plusMinutes(15))) {
                             int rand = (int)(Math.random()*(2));
                             if(rand == 1){
                                 newList.get(i).setLapsed(true);
@@ -83,12 +58,11 @@ public class Main {
                     newList = ordersList.sortedOrdersListBgc();
                     if(newList.stream().filter(Order::isLapsed).count()>=1)
                         Collections.reverse(newList);
-
                     if(newList.size() > 0){
                         for (int i = 0; i < newList.size(); i++) {
                             int noOfMenuPositions = ordersList.getMenuPositionsNo(0);
                             int noOfChefs = (int) employees.getList().entrySet().stream().filter(e -> e.getValue().getJobTitle().equals("kucharz")).count();
-                            int sleepTime = 20000*noOfMenuPositions;
+                            int sleepTime = 30000*noOfMenuPositions;
                             if(noOfChefs>1){
                                 sleepTime/=(((noOfChefs*5)+100)/100d);
                             }
@@ -105,11 +79,31 @@ public class Main {
                                 else{
                                     restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
                                 }
-                                double orderPreparationTime = Duration.between(newList.get(i).getDateOfOrder(),LocalDateTime.now()).toSeconds();
-                                if(orderPreparationTime < 20){
-                                    double tipAmount = newList.get(i).getTotal(menu.getList())*((20-orderPreparationTime)*2)/100d;
-                                    employees.setTip(tipAmount);
+                                if(newList.get(i).isForDelivery()){
+                                    empId = (int)(Math.random()*delivers.size());
+                                    while(!delivers.get(empId).getValue().isReady()){
+                                        empId = (int)(Math.random()*delivers.size());
+                                    }
+                                    Thread inDelivery = new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            delivers.get(empId).getValue().setReady(false);
+                                            try {
+                                                Thread.sleep(TimeUnit.MINUTES.toMillis(2));
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                            delivers.get(empId).getValue().setReady(true);
+                                        }
+                                    });
+                                    inDelivery.start();
+                                    calculateTip(newList,i,delivers);
                                 }
+                                else{
+                                    empId = (int)(Math.random()*waiteers.size());
+                                    calculateTip(newList,i,waiteers);
+                                }
+
                                 moveBetweenOrderList(newList,i);
                             }
 
@@ -149,6 +143,7 @@ public class Main {
                 "13 - kolejność zamówień do realziacji\n" +
                 "14 - losowe zamówienie\n" +
                 "15 - zrealizowane zamówienia\n" +
+                "16 - wyświetl aktualny utarg\n" +
                 "20 - zakończ\n");
     }
     private static void startRestaurant(){
@@ -322,13 +317,11 @@ public class Main {
         Pattern pattern = Pattern.compile("\\d{9}");
         Matcher matcher = pattern.matcher(telephoneNumber);
         while(!matcher.matches()){
-            System.out.println("Podaj poprawną cenę: ");
+            System.out.println("Podaj poprawny numer: ");
             telephoneNumber = scan.nextLine();
             matcher = pattern.matcher(telephoneNumber);
         }
         boolean flag = false;
-                //employees.addToList(new Employee(firstName,lastName,telephoneNumber,jobTitle,0.0),
-                //true, firstName+";"+lastName+";"+jobTitle+";"+"0.0");
         if(jobTitle.equals("kelner"))
             flag = employees.addToList(new Waiteer(firstName,lastName,telephoneNumber,jobTitle,0.0),
                     true, firstName+";"+lastName+";"+telephoneNumber+";"+jobTitle+";"+"0.0");
@@ -402,31 +395,11 @@ public class Main {
                 System.out.println("Podaj poprawną liczbę");
             }
         }
-        /*ArrayList<Integer> indexToRemove = new ArrayList<>();
-        for (int i = 0; i<orderList.size();i++) {
-            int val = orderList.get(i);
-            if(val>=1 && val<=menu.getList().size()){
-                if(!menu.getList().get(orderList.get(i)).isAvailable()){
-                    indexToRemove.add(i);
-                    System.out.println("Danie: " + menu.getList().get(orderList.get(i)).getName() + " jest niedostępne - zostanie usunięte z zamówienia!");
-                }
-
-            }else{
-                System.out.println("Nie posiadamy dania o id " + orderList.get(i));
-                indexToRemove.add(i);
-            }
-        }
-        int count = 0;
-        for (Integer i : indexToRemove) {
-            orderList.remove(i - count);
-            count++;
-        }*/
         orderList = validateOrder(orderList);
         if(orderList.size() == 0){
             System.out.println("Nie wybrałeś żadnej poprawnej pozycji z menu!");
         }
         else{
-            String orderType = null;
             System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - na miejscu lub 2 - z dostawą");
             end = false;
             Order order = null;
@@ -491,7 +464,6 @@ public class Main {
             }
             boolean end = false;
             int action = -1;
-            String orderType = null;
             System.out.println("Zamówienie z dostawą czy na miejscu?\nWybierz 1 - na miejscu lub 2 - z dostawą");
             while(!end){
                 String address = "";
@@ -529,10 +501,21 @@ public class Main {
             }
         }
     }
-
     private static void moveBetweenOrderList(List<Order> newList, int i){
         ordersDone.addOrder(newList.get(i));
         ordersList.delete(newList.get(i).getId());
+    }
+    private static void calculateTip(List<Order> newList, int i, List<Map.Entry<Integer, Employee>> l){
+        double orderPreparationTime = Duration.between(newList.get(i).getDateOfOrder(),LocalDateTime.now()).toMinutes();
+        if(orderPreparationTime < 15){
+            double tipAmount = newList.get(i).getTotal(menu.getList())*((-orderPreparationTime)*2)/100d;
+            Order o = newList.get(i);
+            if(tipAmount>o.getTotal(menu.getList())*0.1){
+                tipAmount=o.getTotal(menu.getList())*0.1;
+            }
+            l.get(empId).getValue().setTip(Math.round(tipAmount*100)/100D);
+            System.out.println("Pracownik: " + l.get(empId).getValue() + " ptrzymał napiwek: " + Math.round(tipAmount*100)/100D +" zł za zaowienie " + o);
+        }
     }
     private static int validateId(){
         int id = -1;

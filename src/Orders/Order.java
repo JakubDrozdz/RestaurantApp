@@ -1,8 +1,6 @@
 package Orders;
 
 import Menu.Dish;
-
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -49,11 +47,9 @@ public abstract class Order {
     public boolean isForDelivery() {
         return forDelivery;
     }
-
     public int getId() {
         return id;
     }
-
     public double getTotal(HashMap<Integer, Dish> menu){
         for (int i = 0; i < orderList.size(); i++) {
             total += Double.parseDouble(menu.get(orderList.get(i)).getPrize());
@@ -63,15 +59,12 @@ public abstract class Order {
     public int getMenuPositionsNo(){
         return orderList.size();
     }
-
     public LocalDateTime getDateOfOrder() {
         return now;
     }
-
     public boolean isLapsed() {
         return lapsed;
     }
-
     public void setLapsed(boolean lapsed) {
         this.lapsed = lapsed;
     }

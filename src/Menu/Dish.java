@@ -22,25 +22,16 @@ public abstract class Dish {
             return isVegetarian ? (name + "\n" + description + "\t" + price + " zl\t(wegetarianskie)")
                     : (name + "\n" + description + "\t" + price + " zl");
     }
-
     public String getName() {
         return this.name;
     }
-
-    public String getDescription() {
-        return this.description;
-    }
-
     public String getPrize() {
         return this.price;
     }
-
-    public boolean isVegetarian() {
-        return this.isVegetarian;
-    }
-
     public void setUnavailable() {
         this.available = false;
     }
-    public boolean isAvailable(){return this.available;}
+    public boolean isAvailable(){
+        return this.available;
+    }
 }

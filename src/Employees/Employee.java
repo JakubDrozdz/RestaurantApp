@@ -15,6 +15,7 @@ public abstract class Employee{
     protected Double tip;
     protected String jobTitle;
     protected boolean ready;
+    protected int ordersDone;
     public Employee(String firstName, String lastName, String telephoneNumber, String jobTitle,Double tip) {
         this.lastName = lastName;
         this.firstName = firstName;
@@ -22,6 +23,7 @@ public abstract class Employee{
         this.jobTitle = jobTitle;
         this.telephoneNumber = telephoneNumber;
         this.ready = true;
+        this.ordersDone = 0;
     }
 
     public String toString(){
@@ -29,7 +31,7 @@ public abstract class Employee{
     }
     public String toString(boolean details){
         return firstName + " " + lastName + ", stanowisko: " + jobTitle
-                +", numer telefonu: "+ telephoneNumber+ ", wysokość napiwku: " + tip;
+                +", numer telefonu: "+ telephoneNumber+ ", wysokość napiwku: " + tip + ", zrealizowane zamówienia: " + ordersDone;
     }
     public String getJobTitle() {
         return jobTitle;
@@ -69,5 +71,16 @@ public abstract class Employee{
     }
     public void setReady(boolean ready) {
         this.ready = ready;
+    }
+    public void addOrderDone() {
+        this.ordersDone++;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
     }
 }

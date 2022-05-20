@@ -1,8 +1,4 @@
-Jan;Kowalczyk;421432654;dostawca;0.0
-Kamil;Kamilewski;1239874556;kelner;0.0
-Janek;KLowal;531234567;kelner;0.0
-Ala;Nowak;432642123;kucharz;0.0
-Janek;Nowaczek;123321123;kelner;0.0
-Jan;Kowalczyk;444555666;kucharz;0.0
-Jan;Koks;123123123;kucharz;0.0
-Jan;Kowal;123123123;dostawca;0.0
+Piotr;Kowal;531234567;kelner;0.0
+Adam;Nowak;432642123;kucharz;0.0
+Karol;Kowalczyk;444555666;kucharz;0.0
+Jan;Janeczko;123123123;dostawca;0.0

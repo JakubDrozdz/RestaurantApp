@@ -23,14 +23,14 @@ public class Main {
     private static final Container<Employee> employees= new Container<>("employees");
     private static final Scanner scan = new Scanner(System.in);
     private static final Orders ordersList = new Orders();
+    private static final Orders allOrdersList = new Orders();
     private static final Orders ordersDone = new Orders();
     private static int empId = 0;
-
+    private static double dailyEarnings = 0d;
     private static List<Map.Entry<Integer, Employee>> delivers = employees.getList().entrySet().stream().filter(e->e.getValue()
             .getJobTitle().equals("dostawca")).toList();
     private static List<Map.Entry<Integer, Employee>> waiteers = employees.getList().entrySet().stream().filter(e->e.getValue()
             .getJobTitle().equals("kelner")).toList();
-
     private static RunningRestaurant restaurant = new RunningRestaurant();
     private static Thread t = new Thread(restaurant);
     private static Timer timer = new Timer();
@@ -39,7 +39,7 @@ public class Main {
             @Override
             public void run() {
 
-                if(ordersList.getSize()>=1 || (restaurant.isInterrupted() && ordersList.getSize() == 0)){
+                if(ordersList.getSize()>0 || !restaurant.isInterrupted()){
                     ArrayList<Order> ordersDoneStream = ordersDone.getList();
                     List<Order> newList = ordersList.sortedOrdersListBgc();
                     for (int i = 0; i < newList.size(); i++) {
@@ -74,11 +74,16 @@ public class Main {
 
                             if(!ordersDoneStream.contains(newList.get(i))){
                                 if(newList.get(i).isLapsed()) {
-                                    restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()) * 0.8);
+                                    double earnings = newList.get(i).getTotal(menu.getList()) * 0.8;
+                                    restaurant.addDailyEarnings(earnings);
+                                    dailyEarnings += earnings;
                                 }
                                 else{
-                                    restaurant.addDailyEarnings(newList.get(i).getTotal(menu.getList()));
+                                    double earnings = newList.get(i).getTotal(menu.getList());
+                                    restaurant.addDailyEarnings(earnings);
+                                    dailyEarnings += earnings;
                                 }
+
                                 if(newList.get(i).isForDelivery()){
                                     empId = (int)(Math.random()*delivers.size());
                                     while(!delivers.get(empId).getValue().isReady()){
@@ -144,7 +149,7 @@ public class Main {
                 "14 - losowe zamówienie\n" +
                 "15 - zrealizowane zamówienia\n" +
                 "16 - wyświetl aktualny utarg\n" +
-                "20 - zakończ\n");
+                "17 - zakończ\n");
     }
     private static void startRestaurant(){
         System.out.println("Witamy w systemie obsługi restauracji XYZ!");
@@ -158,7 +163,7 @@ public class Main {
         }
 
         scan.nextLine();
-        while(actionChoosen != 20){
+        while(actionChoosen != 17){
             switch(actionChoosen){
                 case 1:
                     printActionList();
@@ -191,7 +196,7 @@ public class Main {
                     placeOrder();
                     break;
                 case 11:
-                    ordersList.showOrders();
+                    allOrdersList.showOrders();
                     break;
                 case 12:
                     showOrderDetails();
@@ -219,13 +224,22 @@ public class Main {
                 System.out.println("Podaj poprawną liczbę");
             }
             scan.nextLine();
-            if(actionChoosen == 20){
-                System.out.println("Zamykanie restauracji - realizacja ostatniego zamówień");
-                ordersList.sortedOrdersList();
+            if(actionChoosen == 17){
+                if(ordersList.getSize()>0){
+                    System.out.println("Zamykanie restauracji - realizacja ostatniego zamówienia");
+                    System.out.println(ordersList.getList().get(0));
+                }
+                else{
+                    System.out.println("Zamykanie restauracji");
+                    System.out.println(Math.round(dailyEarnings*100)/100D);
+                }
+
             }
         }
+        restaurant.interrupt();
         timer.cancel();
         timer.purge();
+
     }
     private static void addToMenu(){
         System.out.println("Podaj nazwę dania:" );
@@ -343,30 +357,18 @@ public class Main {
             System.out.println("Nie można usunąć");
     }
     private static void showEmployeeData(){
-        int id = 0;
-        boolean flag = false;
-        while(!flag){
-            try{
-                System.out.println("Podaj id pracownika, którego dane chcesz wyświetlić");
-                id = scan.nextInt();
-                if(id>employees.getSize()){
-                    System.out.println("Podaj poprawną liczbę");
-                    flag = false;
-                }
-                else
-                    flag = true;
-            }
-            catch(InputMismatchException ime){
-                System.out.println("Podaj poprawną liczbę");
-                flag = false;
-            }
-        }
-        employees.showData(id);
+        System.out.println("Podaj ID pracownika:");
+        int id = validateId();
+        scan.nextLine();
+        if(id>=0)
+            employees.showData(id);
+        else
+            System.out.println("Błędne ID");
     }
     private static void placeOrder(){
         ArrayList<Integer> orderList = new ArrayList<>();
-        int action = 0;
-        String finish = "n";
+        int action;
+        String finish;
         System.out.println("Jeśli chcesz zobaczyć menu naciśnij 0\n");
         boolean end = false;
         boolean show = true;
@@ -433,6 +435,7 @@ public class Main {
                             System.out.println("Nie ma takiej opcji");
                     }
                     ordersList.addOrder(order);
+                    allOrdersList.addOrder(order);
                 }catch(InputMismatchException ime){
                     System.out.println("Podaj poprawny numer!");
                 }
@@ -442,7 +445,7 @@ public class Main {
     private static void showOrderDetails(){
         System.out.println("Podaj ID zamówienia:");
         int id = validateId();
-        ordersList.showOrderDetails(id-1,menu.getList());
+        allOrdersList.showOrderDetails(id-1,menu.getList());
     }
     private static void randomOrder(){
         ArrayList<Integer> orderList = new ArrayList<>();
@@ -484,11 +487,13 @@ public class Main {
                     }
                     switch (action){
                         case 1:
-                            ordersList.addOrder(new OrderOnSite(orderList,tableId,orderId++));
+                            ordersList.addOrder(new OrderOnSite(orderList,tableId,orderId));
+                            allOrdersList.addOrder(new OrderOnSite(orderList,tableId,orderId++));
                             end = true;
                             break;
                         case 2:
-                            ordersList.addOrder(new OrderForDelivery(orderList,address,orderId++));
+                            ordersList.addOrder(new OrderForDelivery(orderList,address,orderId));
+                            allOrdersList.addOrder(new OrderForDelivery(orderList,address,orderId++));
                             end = true;
                             break;
                         default:
@@ -506,15 +511,19 @@ public class Main {
         ordersList.delete(newList.get(i).getId());
     }
     private static void calculateTip(List<Order> newList, int i, List<Map.Entry<Integer, Employee>> l){
-        double orderPreparationTime = Duration.between(newList.get(i).getDateOfOrder(),LocalDateTime.now()).toMinutes();
-        if(orderPreparationTime < 15){
-            double tipAmount = newList.get(i).getTotal(menu.getList())*((-orderPreparationTime)*2)/100d;
-            Order o = newList.get(i);
-            if(tipAmount>o.getTotal(menu.getList())*0.1){
-                tipAmount=o.getTotal(menu.getList())*0.1;
+        Order o = newList.get(i);
+        double orderPreparationTime = Duration.between(o.getDateOfOrder(),LocalDateTime.now()).toSeconds();
+        double total = o.getTotal(menu.getList())/2;
+        if((orderPreparationTime/60) < 15){
+            double tipAmount = total*(((15-(orderPreparationTime/60))*0.9)/100d);
+            if(tipAmount>(total*0.1)){
+                tipAmount=(total*0.1);
             }
             l.get(empId).getValue().setTip(Math.round(tipAmount*100)/100D);
-            System.out.println("Pracownik: " + l.get(empId).getValue() + " ptrzymał napiwek: " + Math.round(tipAmount*100)/100D +" zł za zaowienie " + o);
+            l.get(empId).getValue().addOrderDone();
+            System.out.println("Pracownik: " + l.get(empId).getValue().getFirstName() + " " + l.get(empId).getValue().getLastName() + " otrzymał napiwek: " + Math.round(tipAmount*100)/100D +" zł za zaowienie " + o.getId() +", z dostawą: " + (o.isForDelivery()?"tak":"nie"));
+            if(restaurant.isInterrupted())
+                System.out.println(Math.round(dailyEarnings*100)/100D);
         }
     }
     private static int validateId(){

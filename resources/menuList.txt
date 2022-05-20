@@ -1,5 +1,5 @@
-Pizza;peperoni;35.99;false
-Tofu;roslina;24.99;true
-Ananas;owoc;12.21;true
-Cola;napoj;5.99;false
-Pepsi;napój;4.99;false
+Pizza peperoni;papryka, salami, sos pomidorowy;35.99;false
+Omlet bananowy;dodatki owocowe, bita śmietana;22.99;true
+Pizza hawajska;ananas, szynka, sos pomidorowy;31.99;false
+Coca-Cola;napoj;5.99;false
+Bruscetta;pomidory, bazylia, przyprawy;13.99;false
